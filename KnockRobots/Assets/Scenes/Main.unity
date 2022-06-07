@@ -213,7 +213,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 694330143}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.11, y: 0, z: 0}
+  m_LocalPosition: {x: -3.49, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -236,6 +236,24 @@ MonoBehaviour:
   playerKeyArray: 
   keyNumber: 0
   isKeyEnter: 0
+  canvas: {fileID: 2061478367}
+  UpArrowBlack: {fileID: 9198880966130323600, guid: 08c02e862a79c4ac09bb9f9765eb9ce3, type: 3}
+  UpArrowBlue: {fileID: 6680321560989771538, guid: b4b2d6aac137c4fc281e3df2ec81145e, type: 3}
+  UpArrowOrange: {fileID: 4221524765983894553, guid: ac546ede89bec4e7894cb968177233c8, type: 3}
+  UpArrowPink: {fileID: 7636222462812518359, guid: 5babe376a78974abc8b2509dfe8c9a02, type: 3}
+  DownArrowBlack: {fileID: 7683565715236096342, guid: cf1ea35f3ff5140fbbda026106bc7929, type: 3}
+  DownArrowBlue: {fileID: 1235771465393033494, guid: 8ff89cdbc7d1f4d108113e39f9237c57, type: 3}
+  DownArrowOrange: {fileID: 3039051721590605835, guid: 47325e75cd71e475492ea0e35d7ecbbb, type: 3}
+  DownArrowPink: {fileID: 2203322431031419532, guid: 7ed056ad80b71430fa0c48b2eb2ddb7f, type: 3}
+  RightArrowBlack: {fileID: 300038769992755937, guid: d05439f145c2e4ce1a9aaf12baff0155, type: 3}
+  RightArrowBlue: {fileID: 1334041212735158296, guid: 5851daa0ac697427eaf54f5ec5a0c205, type: 3}
+  RightArrowOrange: {fileID: 8887426153259513346, guid: 674befceaf563450f9b879604172b5ce, type: 3}
+  RightArrowPink: {fileID: 6466146112624109500, guid: 8a840df8b3d1d489b96ff27785df83c3, type: 3}
+  LeftArrowBlack: {fileID: 548539910656084916, guid: c1ed63d5c8025482080b118da553c6c7, type: 3}
+  LeftArrowBlue: {fileID: 3723453284370698777, guid: 109c9b1e5b7904cc3887468281331e63, type: 3}
+  LeftArrowOrange: {fileID: 8181702860373559959, guid: 5c4a520f079784a15bb0d3494ae5ece5, type: 3}
+  LeftArrowPink: {fileID: 1290239248311685169, guid: 60bada4f2ef064d07b21908df0dc628b, type: 3}
+  Image: {fileID: 85751240133383280, guid: c01b5d2b99fa9492ab2482ed95ecc0a7, type: 3}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,7 +544,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
