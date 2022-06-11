@@ -142,7 +142,7 @@ public class GameManager : MonoBehaviour
             isKnock = true;
         }
 
-        comboText.text = "x " + combo.ToString();
+        comboText.text = combo.ToString();
         GaugeReduction();    
     }
 
