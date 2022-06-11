@@ -141,7 +141,7 @@ public class GameManager : MonoBehaviour
                 isKnockEnter = false;
                 Invoke("UIReset", 0.5f);
                 Judge();
-                Invoke("OneTurnSwitcher", 2);
+                Invoke("OneTurnSwitcher", 1.5f);
             }
         }
 
@@ -683,10 +683,6 @@ public class GameManager : MonoBehaviour
     {
         isOneTurn = true;
         isGenerate = true;
-        judgeMiss.enabled = false;
-        judgeBad.enabled = false;
-        judgeGreat.enabled = false;
-        judgePerfect.enabled = false;
 
         Debug.Log("Restart");
     }
@@ -702,6 +698,11 @@ public class GameManager : MonoBehaviour
         {
             Destroy(i);
         }
+
+        judgeMiss.enabled = false;
+        judgeBad.enabled = false;
+        judgeGreat.enabled = false;
+        judgePerfect.enabled = false;
     }
 
     public void Judge()
