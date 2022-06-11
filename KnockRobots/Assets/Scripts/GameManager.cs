@@ -77,6 +77,10 @@ public class GameManager : MonoBehaviour
 
     public int combo;
     public Text comboText;
+    public Text judgeMiss;
+    public Text judgeBad;
+    public Text judgeGreat;
+    public Text judgePerfect;
 
     // Start is called before the first frame update
     void Start()
@@ -98,6 +102,11 @@ public class GameManager : MonoBehaviour
             TimerIcon1.enabled = true;
             TimerIcon2.enabled = true;
             TimerIcon3.enabled = true;
+            judgeMiss.enabled = false;
+            judgeBad.enabled = false;
+            judgeGreat.enabled = false;
+            judgePerfect.enabled = false;
+
         }
 
         if (isKeyEnter == true)
@@ -132,7 +141,7 @@ public class GameManager : MonoBehaviour
                 isKnockEnter = false;
                 Invoke("UIReset", 0.5f);
                 Judge();
-                Invoke("OneTurnSwitcher", 1);
+                Invoke("OneTurnSwitcher", 2);
             }
         }
 
@@ -600,7 +609,7 @@ public class GameManager : MonoBehaviour
                 }
             }
 
-            if(Input.GetKeyDown(KeyCode.KeypadEnter))
+            if(Input.GetKeyDown(KeyCode.Return))
             {
                 if(isKnock == true)
                 {
@@ -674,6 +683,10 @@ public class GameManager : MonoBehaviour
     {
         isOneTurn = true;
         isGenerate = true;
+        judgeMiss.enabled = false;
+        judgeBad.enabled = false;
+        judgeGreat.enabled = false;
+        judgePerfect.enabled = false;
 
         Debug.Log("Restart");
     }
@@ -695,20 +708,20 @@ public class GameManager : MonoBehaviour
     {
         if(judge < arraylength/3)
         {
-            Debug.Log("Hopeless");
+            judgeMiss.enabled = true;
         }
         if(judge >= arraylength/3 && judge < arraylength / 2)
         {
-            Debug.Log("Not Enough");
+            judgeBad.enabled = true;
         }
         if(judge >= arraylength / 2 && judge < arraylength)
         {
-            Debug.Log("Good!");
+            judgeGreat.enabled = true;
             combo++;
         }
         if(judge == arraylength)
         {
-            Debug.Log("Perfect!");
+            judgePerfect.enabled = true;
             combo += 5;
         }
     }
