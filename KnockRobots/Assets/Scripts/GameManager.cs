@@ -22,6 +22,8 @@ public class GameManager : MonoBehaviour
 
     public bool isOneTurn = false;
 
+    public bool isGenerate = false;
+
     [SerializeField] GameObject canvas;
 
     public GameObject UpArrowBlack;
@@ -64,43 +66,84 @@ public class GameManager : MonoBehaviour
     [SerializeField] int healPoint = 50;
     [SerializeField] int balanceHealPoint = 25;
 
-    int state;
+    [SerializeField] float timeLimit = 3;
+    public Image TimerIcon1;
+    public Image TimerIcon2;
+    public Image TimerIcon3;
+
+    public int judge = 0;
+    public bool isKnock = false;
+    public bool isKnockEnter = false;
+
+    public int combo;
+    public Text comboText;
 
     // Start is called before the first frame update
     void Start()
     {
         isOneTurn = true;
+        isGenerate = true;
+        currentHP = maxHP;
+        currentMP = 0;
+        combo = 0;
     }
 
     void Update()
     {
-        if (isOneTurn == true)
+        if (isOneTurn == true && isGenerate == true)
         {
             GameGenerater();
-            isOneTurn = false;
             isKeyEnter = true;
+            isGenerate = false;
+            TimerIcon1.enabled = true;
+            TimerIcon2.enabled = true;
+            TimerIcon3.enabled = true;
         }
 
         if (isKeyEnter == true)
         {
-            if (keyNumber > arraylength)
-            {
-                isKeyEnter = false;
-            }
-            else
-            {
-                PlayerKeyInput();
-            }
-
-            if (keyNumber == arraylength)
-            {   
-                Debug.Log("Perfect");
-                Invoke("OneTurnSwitcher", 1);
-            }  
+            PlayerKeyInput();
         }
 
-        GaugeReduction();
-        //Debug.Log(currentHP);
+        if(keyNumber > arraylength)
+        {
+            isKeyEnter = false;
+        }
+
+        if(isOneTurn == true && isGenerate == false)
+        {
+            timeLimit -= Time.deltaTime * 0.7f;
+            if(timeLimit <= 2)
+            {
+                TimerIcon1.enabled = false;
+                if(timeLimit <= 1)
+                {
+                    TimerIcon2.enabled = false;
+                    if(timeLimit <= 0)
+                    {
+                        TimerIcon3.enabled = false;
+                    }
+                }
+            }
+            if ((keyNumber == arraylength)　|| (timeLimit <= 0) || isKnockEnter == true)
+            {
+                isKeyEnter = false;
+                isOneTurn = false;
+                isKnockEnter = false;
+                Invoke("UIReset", 0.5f);
+                Judge();
+                Invoke("OneTurnSwitcher", 1);
+            }
+        }
+
+        if(currentMP >= maxMP)
+        {
+            currentMP = maxMP;
+            isKnock = true;
+        }
+
+        comboText.text = "x " + combo.ToString();
+        GaugeReduction();    
     }
 
     public void KeyGenerate1()
@@ -267,6 +310,7 @@ public class GameManager : MonoBehaviour
     public void PlayerKeyAllayGenerate()
     {
         playerKeyArray = new int[arraylength];
+        generatePlayerGameObjectArray = new GameObject[arraylength];
         //Debug.Log("プレイヤー配列の長さ" + arraylength);   
     }
 
@@ -274,15 +318,15 @@ public class GameManager : MonoBehaviour
     {
         int o = (9 - arraylength) / 2;
         int e = (8 - arraylength) / 2;
-        generatePlayerGameObjectArray = new GameObject[arraylength];
 
         if (isKeyEnter)
         {
-            GameObject generatePlayerGameobject = null;
             if (arraylength % 2 == 1)
             {
+                GameObject generatePlayerGameobject = null;
                 if (Input.GetKeyDown(KeyCode.UpArrow))
                 {
+                    
                     //Debug.Log("入力されたキー：1");
                     playerKeyArray[keyNumber] = 1;
                     //Debug.Log(keyNumber + "番目に" + playerKeyArray[keyNumber] + "を入れた");
@@ -293,12 +337,14 @@ public class GameManager : MonoBehaviour
                         generatePlayerGameobject = Instantiate(UpArrowPink, new Vector3(oddNumberArray[o + keyNumber], 100, 0), Quaternion.identity);
                         generatePlayerGameobject.transform.SetParent(canvas.transform, false);
                         currentMP += MPPoint;
+                        judge++;
                     }
                     else if (generalKeyArray[keyNumber] == 5)
                     {
                         generatePlayerGameobject = Instantiate(UpArrowBlue, new Vector3(oddNumberArray[o + keyNumber], 100, 0), Quaternion.identity);
                         generatePlayerGameobject.transform.SetParent(canvas.transform, false);
                         currentHP += healPoint;
+                        judge++;
                     }
                     else
                     {
@@ -324,12 +370,14 @@ public class GameManager : MonoBehaviour
                         generatePlayerGameobject = Instantiate(DownArrowPink, new Vector3(oddNumberArray[o + keyNumber], 100, 0), Quaternion.identity);
                         generatePlayerGameobject.transform.SetParent(canvas.transform, false);
                         currentMP += MPPoint;
+                        judge++;
                     }
                     else if (generalKeyArray[keyNumber] == 5)
                     {
                         generatePlayerGameobject = Instantiate(DownArrowBlue, new Vector3(oddNumberArray[o + keyNumber], 100, 0), Quaternion.identity);
                         generatePlayerGameobject.transform.SetParent(canvas.transform, false);
                         //comboの値を上昇させる
+                        judge++;
                     }
                     else
                     {
@@ -355,12 +403,14 @@ public class GameManager : MonoBehaviour
                         generatePlayerGameobject = Instantiate(RightArrowPink, new Vector3(oddNumberArray[o + keyNumber], 100, 0), Quaternion.identity);
                         generatePlayerGameobject.transform.SetParent(canvas.transform, false);
                         currentMP += MPPoint;
+                        judge++;
                     }
                     else if (generalKeyArray[keyNumber] == 5)
                     {
                         generatePlayerGameobject = Instantiate(RightArrowBlue, new Vector3(oddNumberArray[o + keyNumber], 100, 0), Quaternion.identity);
                         generatePlayerGameobject.transform.SetParent(canvas.transform, false);
                         currentMP += healPoint;
+                        judge++;
                     }
                     else
                     {
@@ -386,6 +436,7 @@ public class GameManager : MonoBehaviour
                         generatePlayerGameobject = Instantiate(LeftArrowPink, new Vector3(oddNumberArray[o + keyNumber], 100, 0), Quaternion.identity);
                         generatePlayerGameobject.transform.SetParent(canvas.transform, false);
                         currentMP += MPPoint;
+                        judge++;
                     }
                     else if (generalKeyArray[keyNumber] == 5)
                     {
@@ -394,6 +445,7 @@ public class GameManager : MonoBehaviour
                         currentHP += balanceHealPoint;
                         currentMP += balanceHealPoint;
                         //comboの値を少しだけ上昇させる
+                        judge++;
                     }
                     else
                     {
@@ -411,6 +463,7 @@ public class GameManager : MonoBehaviour
 
             if (arraylength % 2 == 0)
             {
+                GameObject generatePlayerGameobject = null;
                 if (Input.GetKeyDown(KeyCode.UpArrow))
                 {
                     //Debug.Log("入力されたキー：1");
@@ -423,12 +476,14 @@ public class GameManager : MonoBehaviour
                         generatePlayerGameobject = Instantiate(UpArrowPink, new Vector3(evenNumberArray[e + keyNumber], 100, 0), Quaternion.identity);
                         generatePlayerGameobject.transform.SetParent(canvas.transform, false);
                         currentMP += MPPoint;
+                        judge++;
                     }
                     else if (generalKeyArray[keyNumber] == 5)
                     {
                         generatePlayerGameobject = Instantiate(UpArrowBlue, new Vector3(evenNumberArray[e + keyNumber], 100, 0), Quaternion.identity);
                         generatePlayerGameobject.transform.SetParent(canvas.transform, false);
                         currentHP += healPoint;
+                        judge++;
                     }
                     else
                     {
@@ -454,12 +509,14 @@ public class GameManager : MonoBehaviour
                         generatePlayerGameobject = Instantiate(DownArrowPink, new Vector3(evenNumberArray[e + keyNumber], 100, 0), Quaternion.identity);
                         generatePlayerGameobject.transform.SetParent(canvas.transform, false);
                         currentMP += MPPoint;
+                        judge++;
                     }
                     else if (generalKeyArray[keyNumber] == 5)
                     {
                         generatePlayerGameobject = Instantiate(DownArrowBlue, new Vector3(evenNumberArray[e + keyNumber], 100, 0), Quaternion.identity);
                         generatePlayerGameobject.transform.SetParent(canvas.transform, false);
                         //comboの値を上昇させる
+                        judge++;
                     }
                     else
                     {
@@ -485,12 +542,14 @@ public class GameManager : MonoBehaviour
                         generatePlayerGameobject = Instantiate(RightArrowPink, new Vector3(evenNumberArray[e + keyNumber], 100, 0), Quaternion.identity);
                         generatePlayerGameobject.transform.SetParent(canvas.transform, false);
                         currentMP += MPPoint;
+                        judge++;
                     }
                     else if (generalKeyArray[keyNumber] == 5)
                     {
                         generatePlayerGameobject = Instantiate(RightArrowBlue, new Vector3(evenNumberArray[e + keyNumber], 100, 0), Quaternion.identity);
                         generatePlayerGameobject.transform.SetParent(canvas.transform, false);
                         currentMP += healPoint;
+                        judge++;
                     }
                     else
                     {
@@ -516,6 +575,7 @@ public class GameManager : MonoBehaviour
                         generatePlayerGameobject = Instantiate(LeftArrowPink, new Vector3(evenNumberArray[e + keyNumber], 100, 0), Quaternion.identity);
                         generatePlayerGameobject.transform.SetParent(canvas.transform, false);
                         currentMP += MPPoint;
+                        judge++;
                     }
                     else if (generalKeyArray[keyNumber] == 5)
                     {
@@ -524,6 +584,7 @@ public class GameManager : MonoBehaviour
                         currentHP += balanceHealPoint;
                         currentMP += balanceHealPoint;
                         //comboの値を少しだけ上昇させる
+                        judge++;
                     }
                     else
                     {
@@ -536,6 +597,16 @@ public class GameManager : MonoBehaviour
                     
                     keyNumber++;
                     //Debug.Log("keyNumber" + keyNumber);
+                }
+            }
+
+            if(Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                if(isKnock == true)
+                {
+                    Knock();
+                    isKnock = false;
+                    isKnockEnter = true;
                 }
             }
         }
@@ -555,6 +626,11 @@ public class GameManager : MonoBehaviour
             GreenGauge.enabled = false;
         }
 
+        if(currentHP >= maxHP)
+        {
+            GreenGauge.enabled = true;
+        }
+
         if(RedGauge.fillAmount > YellowGauge.fillAmount)
         {
             if(RedGauge.fillAmount - YellowGauge.fillAmount > 0.005f)
@@ -570,11 +646,6 @@ public class GameManager : MonoBehaviour
         float fillProp = 0.75f;
         KnockGauge.fillAmount = (float)currentMP / (float)maxMP;
         KnockGauge.fillAmount *= fillProp;
-
-        //if(currentMP == maxMP)
-        //{
-
-        //}
     }
 
     public void GameGenerater()
@@ -592,9 +663,8 @@ public class GameManager : MonoBehaviour
         //Debug.Log(keyGenerateChanger);
 
         keyNumber = 0;
-
-        currentHP = maxHP;
-        currentMP = 0;
+        timeLimit = 3;
+        judge = 0;
 
         PlayerKeyAllayGenerate();
         //Debug.Log("現在のkeyNumber" + keyNumber);
@@ -603,6 +673,134 @@ public class GameManager : MonoBehaviour
     public void OneTurnSwitcher()
     {
         isOneTurn = true;
-        keyNumber = 0;
+        isGenerate = true;
+
+        Debug.Log("Restart");
+    }
+
+    public void UIReset()
+    {
+        foreach (GameObject i in generatePlayerGameObjectArray)
+        {
+            Destroy(i);
+        }
+
+        foreach (GameObject i in generateGeneralGameObjectArray)
+        {
+            Destroy(i);
+        }
+    }
+
+    public void Judge()
+    {
+        if(judge < arraylength/3)
+        {
+            Debug.Log("Hopeless");
+        }
+        if(judge >= arraylength/3 && judge < arraylength / 2)
+        {
+            Debug.Log("Not Enough");
+        }
+        if(judge >= arraylength / 2 && judge < arraylength)
+        {
+            Debug.Log("Good!");
+            combo++;
+        }
+        if(judge == arraylength)
+        {
+            Debug.Log("Perfect!");
+            combo += 5;
+        }
+    }
+
+    public void Knock()
+    {
+        int o = (9 - arraylength) / 2;
+        int e = (8 - arraylength) / 2;
+        currentMP = 0;
+        judge = arraylength;
+        for (int i = 0; i < arraylength; i++)
+        {
+            playerKeyArray[i] = generalKeyArray[i];
+            if (arraylength % 2 == 1)
+            {
+                GameObject generatePlayerGameobject = null;
+                if (generalKeyArray[i] == 1)
+                {
+                    Destroy(generateGeneralGameObjectArray[i]);
+                    generatePlayerGameobject = Instantiate(UpArrowPink, new Vector3(oddNumberArray[o + i], 100, 0), Quaternion.identity);
+                    generatePlayerGameobject.transform.SetParent(canvas.transform, false);
+                    generatePlayerGameObjectArray[i] = generatePlayerGameobject;
+                }
+                else if (generalKeyArray[i] == 2)
+                {
+                    Destroy(generateGeneralGameObjectArray[i]);
+                    generatePlayerGameobject = Instantiate(DownArrowPink, new Vector3(oddNumberArray[o + i], 100, 0), Quaternion.identity);
+                    generatePlayerGameobject.transform.SetParent(canvas.transform, false);
+                    generatePlayerGameObjectArray[i] = generatePlayerGameobject;
+                }
+                else if (generalKeyArray[i] == 3)
+                {
+                    Destroy(generateGeneralGameObjectArray[i]);
+                    generatePlayerGameobject = Instantiate(RightArrowPink, new Vector3(oddNumberArray[o + i], 100, 0), Quaternion.identity);
+                    generatePlayerGameobject.transform.SetParent(canvas.transform, false);
+                    generatePlayerGameObjectArray[i] = generatePlayerGameobject;
+                }
+                else if (generalKeyArray[i] == 4)
+                {
+                    Destroy(generateGeneralGameObjectArray[i]);
+                    generatePlayerGameobject = Instantiate(LeftArrowPink, new Vector3(oddNumberArray[o + i], 100, 0), Quaternion.identity);
+                    generatePlayerGameobject.transform.SetParent(canvas.transform, false);
+                    generatePlayerGameObjectArray[i] = generatePlayerGameobject;
+                }
+                else if (generalKeyArray[i] == 5)
+                {
+                    Destroy(generateGeneralGameObjectArray[i]);
+                    generatePlayerGameobject = Instantiate(UpArrowBlue, new Vector3(oddNumberArray[o + i], 100, 0), Quaternion.identity);
+                    generatePlayerGameobject.transform.SetParent(canvas.transform, false);
+                    generatePlayerGameObjectArray[i] = generatePlayerGameobject;
+                }
+            }
+
+            if (arraylength % 2 == 0)
+            {
+                GameObject generatePlayerGameobject = null;
+                if (generalKeyArray[i] == 1)
+                {
+                    Destroy(generateGeneralGameObjectArray[i]);
+                    generatePlayerGameobject = Instantiate(UpArrowPink, new Vector3(evenNumberArray[e + i], 100, 0), Quaternion.identity);
+                    generatePlayerGameobject.transform.SetParent(canvas.transform, false);
+                    generatePlayerGameObjectArray[i] = generatePlayerGameobject;
+                }
+                else if (generalKeyArray[i] == 2)
+                {
+                    Destroy(generateGeneralGameObjectArray[i]);
+                    generatePlayerGameobject = Instantiate(DownArrowPink, new Vector3(evenNumberArray[e + i], 100, 0), Quaternion.identity);
+                    generatePlayerGameobject.transform.SetParent(canvas.transform, false);
+                    generatePlayerGameObjectArray[i] = generatePlayerGameobject;
+                }
+                else if (generalKeyArray[i] == 3)
+                {
+                    Destroy(generateGeneralGameObjectArray[i]);
+                    generatePlayerGameobject = Instantiate(RightArrowPink, new Vector3(evenNumberArray[e + i], 100, 0), Quaternion.identity);
+                    generatePlayerGameobject.transform.SetParent(canvas.transform, false);
+                    generatePlayerGameObjectArray[i] = generatePlayerGameobject;
+                }
+                else if (generalKeyArray[i] == 4)
+                {
+                    Destroy(generateGeneralGameObjectArray[i]);
+                    generatePlayerGameobject = Instantiate(LeftArrowPink, new Vector3(evenNumberArray[e + i], 100, 0), Quaternion.identity);
+                    generatePlayerGameobject.transform.SetParent(canvas.transform, false);
+                    generatePlayerGameObjectArray[i] = generatePlayerGameobject;
+                }
+                else if (generalKeyArray[i] == 5)
+                {
+                    Destroy(generateGeneralGameObjectArray[i]);
+                    generatePlayerGameobject = Instantiate(UpArrowBlue, new Vector3(evenNumberArray[e + i], 100, 0), Quaternion.identity);
+                    generatePlayerGameobject.transform.SetParent(canvas.transform, false);
+                    generatePlayerGameObjectArray[i] = generatePlayerGameobject;
+                }              
+            }
+        } 
     }
 }
